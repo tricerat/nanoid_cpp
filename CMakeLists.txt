@@ -19,6 +19,8 @@ target_link_libraries(nanoid Threads::Threads)
 #  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic>
 #)
 
+set_property(TARGET nanoid PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 #############################################
 # Unit tests
 
