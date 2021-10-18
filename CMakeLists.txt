@@ -19,6 +19,12 @@ target_link_libraries(nanoid Threads::Threads)
 #  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic>
 #)
 
+if(MSVC)
+  set_target_properties(nanoid PROPERTIES
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+  )
+endif()
+
 set_property(TARGET nanoid PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 #############################################
