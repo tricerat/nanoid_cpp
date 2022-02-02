@@ -24,7 +24,7 @@ if(MSVC)
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
   )
 endif()
-
+set_target_properties(nanoid PROPERTIES FOLDER "third-party")
 set_property(TARGET nanoid PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 #############################################
@@ -39,3 +39,4 @@ target_link_libraries(nanoid_tests
 )
 
 add_test(test_all nanoid_tests)
+set_target_properties(nanoid_tests PROPERTIES FOLDER "third-party")
