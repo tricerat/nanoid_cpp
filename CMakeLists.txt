@@ -31,7 +31,7 @@ set_property(TARGET nanoid PROPERTY POSITION_INDEPENDENT_CODE ON)
 # Unit tests
 
 enable_testing()
-add_executable(nanoid_tests tests/unit_tests.cpp)
+add_executable(nanoid_tests EXCLUDE_FROM_ALL tests/unit_tests.cpp)
 
 target_link_libraries(nanoid_tests
     nanoid
