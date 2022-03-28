@@ -41,8 +41,8 @@ public:
         for (std::size_t i = 0; i < size; i += _sequence.size())
         {
             bytes.insert(
-                std::end(bytes), 
-                std::begin(_sequence), 
+                std::end(bytes),
+                std::begin(_sequence),
                 std::begin(_sequence) + std::min(size - i, _sequence.size())
             );
         }
@@ -72,7 +72,7 @@ TEST_CASE("TestCustomAlphabet")
     const std::string alphabet = "1234abcd";
 
     char buff[256];
-    snprintf(buff, sizeof(buff), "[%s]{%lu}$", alphabet.c_str(), _default_size);
+    snprintf(buff, sizeof(buff), "[%s]{%zu}$", alphabet.c_str(), _default_size);
     std::string regex = buff;
 
     std::string res = nanoid::generate(alphabet);
@@ -88,7 +88,7 @@ TEST_CASE("TestCustomAlphabetAndSize")
     std::string res = nanoid::generate(alphabet, size);
 
     char buff[256];
-    snprintf(buff, sizeof(buff), "[%s]{%lu}$", alphabet.c_str(), size);
+    snprintf(buff, sizeof(buff), "[%s]{%zu}$", alphabet.c_str(), size);
     std::string regex = buff;
 
     REQUIRE(res.size() == size);
