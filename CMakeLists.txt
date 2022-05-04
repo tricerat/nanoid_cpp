@@ -11,21 +11,33 @@ add_subdirectory(vendor/catch2)
 file(GLOB_RECURSE NANOID_SRC_FILES src/*.cpp)
 file(GLOB_RECURSE NANOID_INC_FILES inc/*.h)
 
-add_library(nanoid ${NANOID_SRC_FILES})
-target_include_directories(nanoid PUBLIC inc)
-target_link_libraries(nanoid Threads::Threads)
-#target_compile_options(nanoid PRIVATE
-#  $<$<CXX_COMPILER_ID:MSVC>:/W4>
-#  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic>
-#)
+function(create_project SUBPROJECT_TARGET)
+  add_library(${SUBPROJECT_TARGET} ${NANOID_SRC_FILES})
+  target_include_directories(${SUBPROJECT_TARGET} PUBLIC inc)
+  target_link_libraries(${SUBPROJECT_TARGET} Threads::Threads)
+  #target_compile_options(nanoid PRIVATE
+  #  $<$<CXX_COMPILER_ID:MSVC>:/W4>
+  #  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic>
+  #)
 
+  if (ARGV1 STREQUAL "static")
+    set_target_properties(${SUBPROJECT_TARGET} PROPERTIES
+      MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    )
+  else()
+    set_target_properties(${SUBPROJECT_TARGET} PROPERTIES
+      MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+    )
+  endif()
+
+  set_target_properties(${SUBPROJECT_TARGET} PROPERTIES FOLDER "third-party")
+  set_property(TARGET ${SUBPROJECT_TARGET} PROPERTY POSITION_INDEPENDENT_CODE ON)
+endfunction()
+
+create_project(nanoid)
 if(MSVC)
-  set_target_properties(nanoid PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
-  )
+create_project(nanoid-static static)
 endif()
-set_target_properties(nanoid PROPERTIES FOLDER "third-party")
-set_property(TARGET nanoid PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 #############################################
 # Unit tests
@@ -37,6 +49,5 @@ target_link_libraries(nanoid_tests
     nanoid
     Catch2::Test
 )
-
 add_test(test_all nanoid_tests)
 set_target_properties(nanoid_tests PROPERTIES FOLDER "third-party")
