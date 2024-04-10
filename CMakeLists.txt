@@ -88,6 +88,51 @@ endif()
 enable_testing()
 add_executable(nanoid_tests EXCLUDE_FROM_ALL tests/unit_tests.cpp)
 
+if(MSVC)
+      set_target_properties(nanoid_tests PROPERTIES
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+      )
+
+
+    target_compile_options(nanoid_tests PRIVATE
+      $<$<CONFIG:Debug>:
+      ${DEFAULT_CXX_OPTIMIZATION_DEBUG};
+      ${DEFAULT_CXX_DEBUG_SANITIZER};
+
+      # ${DEFAULT_CXX_DEBUG_RUNTIME_LIBRARY};
+      ${DEFAULT_CXX_DEBUG_RUNTIME_CHECKS};
+      >
+      $<$<CONFIG:Release,RelWithDebInfo>:
+      ${DEFAULT_CXX_COMPILER_OPTIMIZATION_RELEASE};
+      >
+      ${DEFAULT_CXX_CALLING_CONVENTION};
+      ${DEFAULT_CXX_COMPILER_OPTIONS};
+      ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
+      ${DEFAULT_CXX_EXCEPTION_HANDLING};
+      ${DEFAULT_CXX_FLOATINGPOINT};
+      ${DEFAULT_CXX_SECURITY_CHECKS};
+      ${DEFAULT_CXX_STANDARDS_CONFORMANCE};
+      # ${DEFAULT_CXX_WARNING_LEVEL};
+    )
+
+    target_link_options(nanoid_tests PRIVATE
+      $<$<CONFIG:Release,RelWithDebInfo>:
+      ${DEFAULT_CXX_LINKER_OPTIMIZATION_RELEASE};
+      >
+      /SUBSYSTEM:CONSOLE;
+    )
+
+    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+      target_link_options(nanoid_tests PRIVATE
+        /MACHINE:X64;
+      )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "win32" OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
+      target_link_options(nanoid_tests PRIVATE
+        /MACHINE:X86;
+      )
+    endif()
+  endif()
+
 target_link_libraries(nanoid_tests
   nanoid
   Catch2::Test
